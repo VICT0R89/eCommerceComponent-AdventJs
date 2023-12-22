@@ -24,7 +24,7 @@ const menuItem = props => {
 }
 
 const cartItem = props => {
-	const { image, alt, name, price, count } = props
+	const { id, image, alt, name, price, count } = props
 	return `
 		<li>
 			<div class="plate">
@@ -36,11 +36,11 @@ const cartItem = props => {
 				<p class="price">${price}</p>
 			</div>
 			<div class="quantity__wrapper">
-				<button class="decrease">
+				<button class="decrease" id="${id}">
 					<img src="images/chevron.svg" />
 				</button>
 				<div class="quantity">${count}</div>
-				<button class="increase">
+				<button class="increase" id="${id}">
 					<img src="images/chevron.svg" />
 				</button>
 			</div>
@@ -70,22 +70,7 @@ const addCartItems = menu => {
 	$CART.innerHTML = `<p class="empty">Your cart is empty.</p>`
 }
 
-const init = () => {
-	addMenuItems(data)
-	addCartItems(data)
-}
-init()
-
-const addToCart = item => {
-	data.map(el => {
-		if (el.id == item.id) {
-			el.count = 1
-		}
-	})
-	init()
-}
-
-document.addEventListener("DOMContentLoaded",()=>{
+const addBtns = () => {
 	const addBtns = document.querySelectorAll('.add')
 	addBtns.forEach(btn => {
 		btn.addEventListener('click', e =>{
@@ -94,4 +79,70 @@ document.addEventListener("DOMContentLoaded",()=>{
 			addToCart(item)
 		})
 	})
-})
+}
+
+const addToCart = item => {
+	data.map(el => {
+		if (el.id == item[0].id) {
+			el.count = 1
+		}
+	})
+	init()
+}
+
+const removeBtns = () => {
+	const decreaseBtns = document.querySelectorAll('.decrease')
+	if (decreaseBtns.length > 0) {
+		decreaseBtns.forEach(btn => {
+			btn.addEventListener('click', e =>{
+				const id = e.target.id
+				const item = data.filter(el => el.id == id)
+				removeFromCart(item)
+			})
+		})
+	}
+}
+
+const removeFromCart = item => {
+	data.map(el => {
+		if (el.id == item[0].id) {
+			if(el.count == 1){
+				el.count = 0
+			} else {
+				el.count--
+			}
+		}
+	})
+	init()
+}
+
+const increseBtns = () => {
+	const increaseBtns = document.querySelectorAll('.increase')
+	if (increaseBtns.length > 0) {
+		increaseBtns.forEach(btn => {
+			btn.addEventListener('click', e =>{
+				const id = e.target.id
+				const item = data.filter(el => el.id == id)
+				increseCount(item)
+			})
+		})
+	}
+}
+
+const increseCount = () => {
+	data.map(el => {
+		if (el.id == item[0].id) {
+			el.count++
+		}
+	})
+	init()
+}
+
+const init = () => {
+	addMenuItems(data)
+	addCartItems(data)
+	addBtns()
+	removeBtns()
+	increseBtns()
+}
+init()
